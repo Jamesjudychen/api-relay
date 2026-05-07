@@ -1,0 +1,64 @@
+# API Relay — Configuration
+# Environment variables are resolved via ${VAR_NAME} syntax.
+
+# Server settings
+host: "127.0.0.1"
+port: 9000
+log_level: "INFO"
+
+# Database
+db_path: "~/.api_relay/data.db"
+
+# Hot-reload: check config file every N seconds
+config_reload_seconds: 30
+
+# Default rate limit applied to all keys unless overridden
+default_rate_limit:
+  requests: 60
+  window_seconds: 60
+
+# Per-IP rate limit for unauthenticated requests
+ip_rate_limit:
+  requests: 120
+  window_seconds: 60
+
+# Bootstrap admin keys (for initial setup; manage via /admin/api-keys afterwards)
+# These are inserted into the DB on first startup if they don't already exist.
+api_keys:
+  admin_keys:
+    - "ag_your_admin_key_here_change_me"
+
+# Upstream provider definitions
+providers:
+  openai:
+    base_url: "https://api.openai.com/v1"
+    default_headers:
+      Authorization: "Bearer ${OPENAI_API_KEY}"
+    timeout_seconds: 60
+
+  openrouter:
+    base_url: "https://openrouter.ai/api/v1"
+    default_headers:
+      Authorization: "Bearer ${OPENROUTER_API_KEY}"
+    timeout_seconds: 60
+
+# Route rules (evaluated in order; first match wins)
+routes:
+  - name: "OpenAI Proxy"
+    match_type: "path_prefix"
+    match_value: "/openai"
+    target_url: "https://api.openai.com/v1"
+    strip_prefix: true
+    timeout_seconds: 60
+
+  - name: "OpenRouter Proxy"
+    match_type: "path_prefix"
+    match_value: "/openrouter"
+    target_url: "https://openrouter.ai/api/v1"
+    strip_prefix: true
+    timeout_seconds: 60
+
+# Log retention
+log_retention_days: 30
+batch_log_flush_interval: 5.0
+batch_log_flush_count: 100

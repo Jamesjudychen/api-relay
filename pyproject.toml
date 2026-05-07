@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "api-relay"
+version = "0.1.0"
+description = "A high-performance, general-purpose API relay/proxy service with API key management, rate limiting, multi-provider routing, and streaming support."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Jamesjudychen" },
+]
+
+dependencies = [
+    "fastapi>=0.104.0,<1",
+    "uvicorn[standard]>=0.24.0,<1",
+    "httpx>=0.28.0,<1",
+    "aiosqlite>=0.20,<1",
+    "pyyaml>=6.0,<7",
+    "pydantic>=2.0,<3",
+]
+
+[project.scripts]
+api-relay = "api_relay.main:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0,<10",
+    "pytest-asyncio>=0.24,<1",
+    "asgi-lifespan>=2.0,<3",
+]
+
+[tool.setuptools.packages.find]
+include = ["api_relay", "api_relay.*"]
+
+[tool.pytest.ini_options]
+testpaths = ["api_relay/tests"]
+asyncio_mode = "auto"
